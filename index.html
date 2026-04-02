@@ -287,6 +287,20 @@
 
   <section class="hero">
     <h1 class="hero__name">Diego Tavares</h1>
+    <div class="mini-player" id="miniPlayer2">
+      <button class="mini-player__play" id="playerBtn2" aria-label="Play/Pause">
+        <svg id="iconPlay2" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="iconPause2" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <div class="mini-player__info">
+        <div class="mini-player__title">Chato(a) Demais</div>
+        <div class="mini-player__bar-wrap" id="playerBarWrap2">
+          <div class="mini-player__bar-fill" id="playerBarFill2"></div>
+        </div>
+      </div>
+      <span class="mini-player__time" id="playerTime2">0:00</span>
+      <audio id="previewAudio2" preload="none" src="https://drive.google.com/uc?export=download&id=1qHhrUj_wFMwXG0MGeqlFlNm76YNFldY-"></audio>
+    </div>
     <div class="mini-player" id="miniPlayer">
       <button class="mini-player__play" id="playerBtn" aria-label="Play/Pause">
         <svg id="iconPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -347,6 +361,56 @@
   </footer>
 
 
+  <script>
+    (function() {
+      const audio = document.getElementById('previewAudio2');
+      const btn   = document.getElementById('playerBtn2');
+      const iconPlay  = document.getElementById('iconPlay2');
+      const iconPause = document.getElementById('iconPause2');
+      const fill  = document.getElementById('playerBarFill2');
+      const timeEl = document.getElementById('playerTime2');
+      const barWrap = document.getElementById('playerBarWrap2');
+      const MAX = 45;
+
+      function fmt(s) {
+        const m = Math.floor(s/60), sec = Math.floor(s%60);
+        return m + ':' + (sec < 10 ? '0' : '') + sec;
+      }
+
+      btn.addEventListener('click', () => {
+        if (audio.paused) { audio.play(); }
+        else { audio.pause(); }
+      });
+
+      audio.addEventListener('play', () => {
+        iconPlay.style.display = 'none';
+        iconPause.style.display = '';
+      });
+      audio.addEventListener('pause', () => {
+        iconPlay.style.display = '';
+        iconPause.style.display = 'none';
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        const t = audio.currentTime;
+        if (t >= MAX) { audio.pause(); audio.currentTime = 0; return; }
+        const pct = (t / MAX) * 100;
+        fill.style.width = pct + '%';
+        timeEl.textContent = fmt(t) + ' / ' + fmt(MAX);
+      });
+
+      barWrap.addEventListener('click', (e) => {
+        const rect = barWrap.getBoundingClientRect();
+        const pct = (e.clientX - rect.left) / rect.width;
+        audio.currentTime = pct * MAX;
+      });
+
+      audio.addEventListener('ended', () => {
+        fill.style.width = '0%';
+        timeEl.textContent = '0:00';
+      });
+    })();
+  </script>
   <script>
     (function() {
       const audio = document.getElementById('previewAudio');
