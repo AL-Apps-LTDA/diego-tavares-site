@@ -236,9 +236,22 @@
       justify-content: center;
       flex-shrink: 0;
       transition: transform 0.2s, background 0.2s;
+      position: relative;
     }
     .mini-player__play:hover { transform: scale(1.08); }
     .mini-player__play svg { width: 14px; height: 14px; fill: #fff; }
+    .mini-player__play.is-playing::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      animation: playerPulse 1.4s ease-out infinite;
+    }
+    @keyframes playerPulse {
+      0%   { opacity: 0.7; transform: scale(1); }
+      100% { opacity: 0;   transform: scale(1.55); }
+    }
     .mini-player__info {
       display: flex;
       flex-direction: column;
@@ -378,17 +391,21 @@
       }
 
       btn.addEventListener('click', () => {
-        if (audio.paused) { audio.play(); }
-        else { audio.pause(); }
+        if (audio.paused) {
+          document.getElementById('previewAudio').pause();
+          audio.play();
+        } else { audio.pause(); }
       });
 
       audio.addEventListener('play', () => {
         iconPlay.style.display = 'none';
         iconPause.style.display = '';
+        btn.classList.add('is-playing');
       });
       audio.addEventListener('pause', () => {
         iconPlay.style.display = '';
         iconPause.style.display = 'none';
+        btn.classList.remove('is-playing');
       });
 
       audio.addEventListener('timeupdate', () => {
@@ -428,17 +445,21 @@
       }
 
       btn.addEventListener('click', () => {
-        if (audio.paused) { audio.play(); }
-        else { audio.pause(); }
+        if (audio.paused) {
+          document.getElementById('previewAudio2').pause();
+          audio.play();
+        } else { audio.pause(); }
       });
 
       audio.addEventListener('play', () => {
         iconPlay.style.display = 'none';
         iconPause.style.display = '';
+        btn.classList.add('is-playing');
       });
       audio.addEventListener('pause', () => {
         iconPlay.style.display = '';
         iconPause.style.display = 'none';
+        btn.classList.remove('is-playing');
       });
 
       audio.addEventListener('timeupdate', () => {
